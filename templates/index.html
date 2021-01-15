@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Stocks</h1>
+<table class="ui inverted black table">
+    <thead>
+    <tr>
+        <th>Symbol</th>
+        <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for stock in stocks %}
+    <tr>
+        <td><a href="/stock/{{stock[1]}}">{{ stock[1] }}</a></td>
+        <td>{{ stock[2] }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

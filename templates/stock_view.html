@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{symbol}} Prices</h1>
+<table class="ui inverted black table">
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Open</th>
+        <th>High</th>
+        <th>Low</th>
+        <th>Close</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for price in prices %}
+    <tr>
+        <td>{{ price[1] }}</td>
+        <td>{{ price[2] }}</td>
+        <td>{{ price[3] }}</td>
+        <td>{{ price[4] }}</td>
+        <td>{{ price[5] }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
