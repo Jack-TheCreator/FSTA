@@ -10,4 +10,6 @@ class APIHandler:
 
     def getPricesByDay(self, stock_symbols:list):
         return(self.api.get_barset(stock_symbols,'day'))
-        
+
+    def getPricesByMinute(self, stock_symbols:list):
+        return(self.api.get_barset(stock_symbols,'minute'))
