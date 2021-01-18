@@ -28,7 +28,8 @@ class DBHandler:
             CREATE TABLE IF NOT EXISTS stock(
                 id INTEGER PRIMARY KEY,
                 symbol TEXT NOT NULL UNIQUE,
-                name TEXT NOT NULL
+                name TEXT NOT NULL,
+                exchange TEXT NOT NULL
             );
         """)
         self.cursor.execute('''
@@ -50,7 +51,7 @@ class DBHandler:
         for stock in stocks:
             try:
                 if(stock.status == "active" and stock.tradable):
-                    self.cursor.execute("INSERT OR IGNORE INTO stock (symbol, name) VALUES (?,?)", (stock.symbol, stock.name))
+                    self.cursor.execute("INSERT OR IGNORE INTO stock (symbol, name, exchange) VALUES (?,?,?)", (stock.symbol, stock.name, stock.exchange))
             except Exception as e:
                 print(e)
 
@@ -94,6 +95,12 @@ class DBHandler:
             SELECT id, symbol, name FROM stock;
         """)
         return(self.cursor.fetchall())
+
+    def getStockbySymbol(self, symbol:str):
+        self.cursor.execute("""
+        SELECT * FROM stock WHERE symbol = ?;
+        """,(symbol,))
+        return(self.cursor.fetchone())
 
     def commit(self):
         self.connection.commit()

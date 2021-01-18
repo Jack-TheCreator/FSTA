@@ -3,4 +3,7 @@ from dbhandler import DBHandler
 
 handler = DBHandler()
 
-print(handler.getPricesBySymbol('AAPL'))
+handler.connect()
+handler.repopAllStocks()
+handler.repopDayPrice()
+handler.commit()
