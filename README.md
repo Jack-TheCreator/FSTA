@@ -1,2 +1,3 @@
 # FSTA
  Full Stack Trading App
+ Currently running locally but will eventualy be put on server...
