@@ -113,13 +113,23 @@ class DBHandler:
                     """, (stock_id,str(bar.t.time()),bar.o,bar.h,bar.l,bar.c,bar.v))
             
 
-    def getPricesBySymbol(self, symbol:str):
+    def getDayPricesBySymbol(self, symbol:str):
         self.cursor.execute("""
             SELECT symbol, date, open, high, low, close
             FROM stock_price
             JOIN stock on stock.id = stock_price.stock_id
             WHERE symbol = ?
             ORDER BY date DESC;
+        """,(symbol,))
+        return(self.cursor.fetchall())
+
+    def getMinutePriceBySymbol(self, symbol:str):
+        self.cursor.execute("""
+            SELECT symbol, time, open, high, low, close
+            FROM stock_minute_price
+            JOIN stock on stock.id = stock_minute_price.stock_id
+            WHERE symbol = ?
+            ORDER BY time;
         """,(symbol,))
         return(self.cursor.fetchall())
 

@@ -19,7 +19,7 @@ def index(request: Request):
 @app.get("/stock/{symbol}")
 def stock_view(request:Request, symbol):
     dbhandler.connect()
-    prices = dbhandler.getPricesBySymbol(symbol)
+    prices = dbhandler.getDayPricesBySymbol(symbol)
     row = dbhandler.getStockbySymbol(symbol)
     print(row)
     return templates.TemplateResponse("stock_view.html", {"request":request, "stock":row, "prices":prices})

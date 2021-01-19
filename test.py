@@ -1,7 +1,6 @@
 from apihandler import APIHandler
 from dbhandler import DBHandler
+from modelhandler import ModelHandler
 
-handler = DBHandler()
-handler.connect()
-handler.reinitAllData()
-handler.commit()
+handler = ModelHandler()
+handler.getModelPred("AAPL")
