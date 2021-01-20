@@ -2,7 +2,7 @@
 
 {% block content %}
 <!-- TradingView Widget BEGIN -->
-<h1><a href="/model/{{stock[1]}}">Model Forecast</a></h1>
+<h1><a href="/model/{{stock[1]}}">-Model Forecast-</a><a href="/minute/{{stock[1]}}"> -Minute Data-</a></h1>
 <div class="tradingview-widget-container">
     <div id="tradingview_64bd9"></div>
     <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/NASDAQ-AAPL/" rel="noopener" target="_blank"><span class="blue-text">AAPL Chart</span></a> by TradingView</div>
@@ -29,7 +29,7 @@
   <!-- TradingView Widget END -->
 </div>
 <div id="prices">
-    <h1>{{symbol}} Prices</h1>
+    <h1>{{stock[1]}} Prices</h1>
     <table class="ui inverted black table">
         <thead>
         <tr>

@@ -1,0 +1,39 @@
+<html>
+<head>
+    <title>UI Test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+    <div class="ui container">
+        <div id="chart"></div>
+        <script src="/static/chart.js"></script>      
+        <div id="minute_prices">
+            <h1>{{stock[1]}} Prices</h1>
+            <table class="ui inverted black table">
+                <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Open</th>
+                    <th>High</th>
+                    <th>Low</th>
+                    <th>Close</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for price in prices %}
+                <tr>
+                    <td>{{ price[1] }}</td>
+                    <td>{{ price[2] }}</td>
+                    <td>{{ price[3] }}</td>
+                    <td>{{ price[4] }}</td>
+                    <td>{{ price[5] }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

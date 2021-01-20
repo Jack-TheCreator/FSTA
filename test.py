@@ -3,4 +3,4 @@ from dbhandler import DBHandler
 from modelhandler import ModelHandler
 
 handler = ModelHandler()
-handler.getModelPred("AAPL")
+handler.createModel('TLSA')
