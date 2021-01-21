@@ -1,9 +1,13 @@
 import sqlite3
 import alpaca_trade_api as tradeapi
 from apihandler import APIHandler
-from datetime import datetime
+from datetime import datetime, date
+from strategies import Strategies
 
-class DBHandler:    
+class DBHandler:
+    def __init__(self):
+        self.currentDate = date.today().isoformat()
+
     def connect(self):
         self.connection = sqlite3.connect('app.db')
         self.cursor = self.connection.cursor()
@@ -16,6 +20,7 @@ class DBHandler:
         self.repopAllStocks()
         self.repopDayPrice()
         self.repopMinutePrice()
+        self.repopStrategies()
         print('done')
 
     def deleteAllTables(self):
@@ -27,6 +32,12 @@ class DBHandler:
         """)
         self.cursor.execute("""
             DROP TABLE stock_minute_price;
+        """)
+        self.cursor.execute("""
+            DROP TABLE strategy;
+        """)
+        self.cursor.execute("""
+            DROP TABLE stock_strategy;
         """)
 
     def createTables(self):
@@ -63,7 +74,21 @@ class DBHandler:
                 volume NOT NULL,
                 FOREIGN KEY (stock_id) REFERENCES stock (id)
             );
-        """)  
+        """)
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS strategy(
+                id INTEGER PRIMARY KEY,
+                name NOT NULL
+            );
+        """)
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS stock_strategy(
+                stock_id INTEGER NOT NULL,
+                strategy_id INTEGER NOT NULL,
+                FOREIGN KEY (stock_id) REFERENCES stock (id)
+                FOREIGN KEY (strategy_id) REFERENCES strategy (id)
+            );
+        """)
 
     def repopAllStocks(self):
         stocks = self.handler.getStocks()
@@ -112,12 +137,29 @@ class DBHandler:
                         VALUES (?,?,?,?,?,?,?)
                     """, (stock_id,str(bar.t.time()),bar.o,bar.h,bar.l,bar.c,bar.v))
             
+    def repopStrategies(self):
+        for strat in Strategies.strats:
+            self.cursor.execute("""
+                INSERT INTO strategy (name)
+                VALUES (?)
+            """,(strat,))
+
+    def getClosingHigh(self):
+        self.cursor.execute("""
+            SELECT * FROM(
+            SELECT stock_id, symbol, name, max(close), date
+            FROM stock_price join stock on stock.id=stock_price.stock_id
+            GROUP BY stock_id
+            ORDER BY symbol
+            ) WHERE date = ?;
+        """,(self.currentDate,))
+        return(self.cursor.fetchall())
 
     def getDayPricesBySymbol(self, symbol:str):
         self.cursor.execute("""
             SELECT symbol, date, open, high, low, close
             FROM stock_price
-            JOIN stock on stock.id = stock_price.stock_id
+            JOIN stock ON stock.id = stock_price.stock_id
             WHERE symbol = ?
             ORDER BY date DESC;
         """,(symbol,))
@@ -142,6 +184,12 @@ class DBHandler:
     def getAllStocks(self):
         self.cursor.execute("""
             SELECT id, symbol, name FROM stock;
+        """)
+        return(self.cursor.fetchall())
+
+    def getStrategies(self):
+        self.cursor.execute("""
+            SELECT * FROM strategy;
         """)
         return(self.cursor.fetchall())
 

@@ -28,6 +28,15 @@
   </div>
   <!-- TradingView Widget END -->
 </div>
+<div id=strat_selection>
+    <form action="post">
+        <select name="strategy_id">
+            {% for strat in strats %}
+            <option value="{{strat[0]}}">{{strat[1]}}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
 <div id="prices">
     <h1>{{stock[1]}} Prices</h1>
     <table class="ui inverted black table">
