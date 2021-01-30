@@ -1,6 +1,7 @@
 import sqlite3
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 from dbhandler import DBHandler
 from modelhandler import ModelHandler
 from fastapi.staticfiles import StaticFiles
@@ -29,7 +30,7 @@ def index(request: Request):
     elif(stockFilter=='new_closing_highs'):
         rows = dbhandler.getClosingHigh()
     elif(stockFilter=='new_closing_low'):
-        pass
+        rows = dbhandler.getClosingLows()
     else:
         rows = dbhandler.getAllStocks()
     print(rows)
@@ -78,3 +79,19 @@ def minData():
         candlesticks.append(stick)
 
     return(candlesticks)
+
+@app.post("/apply_strategy")
+def apply_strategy(strategy_id: int = Form(...), stock_id: int = Form(...)):
+    dbhandler.connect()
+    dbhandler.insertStockStrategy(stock_id, strategy_id)
+    dbhandler.commit()
+    return(RedirectResponse(url=f"strategy/{strategy_id}",status_code=303))
+
+@app.get("/strategy/{strategy_id}")
+def strategy(request: Request, strategy_id):
+    dbhandler.connect()
+    strategy = dbhandler.getStrategybyID(strategy_id)
+    stocks = dbhandler.getStocksByStrategyID(strategy_id)
+    return(templates.TemplateResponse("strategy.html", {"request":request, "stocks":stocks, "strategy":strategy}))
+
+

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="strategy">
+    <h1>{{ strategy[1] }}</h1>
+    <table class="ui inverted black table">
+        <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for stock in stocks %}
+        <tr>
+            <td>{{ stock[0] }}</td>
+            <td>{{ stock[1] }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

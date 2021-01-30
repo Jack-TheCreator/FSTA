@@ -1,8 +1,5 @@
-from apihandler import APIHandler
-from dbhandler import DBHandler
-from modelhandler import ModelHandler
+from helper import Helper
+from strategies import Strategies
 
-handler = DBHandler()
-handler.connect()
-handler.repopStrategies()
-handler.commit()
+strat = Strategies()
+strat.openingRangeBreakout()

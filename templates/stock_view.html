@@ -29,12 +29,15 @@
   <!-- TradingView Widget END -->
 </div>
 <div id=strat_selection>
-    <form action="post">
+    <form method="post" action="/apply_strategy">
         <select name="strategy_id">
             {% for strat in strats %}
             <option value="{{strat[0]}}">{{strat[1]}}</option>
             {% endfor %}
         </select>
+
+        <input type="hidden" name="stock_id" value="{{stock[0]}}"/>
+        <input type="submit" value="apply_strategy"/>
     </form>
 </div>
 <div id="prices">

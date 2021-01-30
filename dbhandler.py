@@ -2,11 +2,12 @@ import sqlite3
 import alpaca_trade_api as tradeapi
 from apihandler import APIHandler
 from datetime import datetime, date
-from strategies import Strategies
+
 
 class DBHandler:
     def __init__(self):
         self.currentDate = date.today().isoformat()
+        self.strats = ["Opening_Range_Breakout", "Opening_Range_Breakdown"]
 
     def connect(self):
         self.connection = sqlite3.connect('app.db')
@@ -138,7 +139,7 @@ class DBHandler:
                     """, (stock_id,str(bar.t.time()),bar.o,bar.h,bar.l,bar.c,bar.v))
             
     def repopStrategies(self):
-        for strat in Strategies.strats:
+        for strat in self.strats:
             self.cursor.execute("""
                 INSERT INTO strategy (name)
                 VALUES (?)
@@ -148,6 +149,17 @@ class DBHandler:
         self.cursor.execute("""
             SELECT * FROM(
             SELECT stock_id, symbol, name, max(close), date
+            FROM stock_price join stock on stock.id=stock_price.stock_id
+            GROUP BY stock_id
+            ORDER BY symbol
+            ) WHERE date = ?;
+        """,(self.currentDate,))
+        return(self.cursor.fetchall())
+
+    def getClosingLows(self):
+        self.cursor.execute("""
+            SELECT * FROM(
+            SELECT stock_id, symbol, name, min(close), date
             FROM stock_price join stock on stock.id=stock_price.stock_id
             GROUP BY stock_id
             ORDER BY symbol
@@ -187,17 +199,38 @@ class DBHandler:
         """)
         return(self.cursor.fetchall())
 
+    def getStocksByStrategyID(self, strategy_id:int):
+        self.cursor.execute("""
+            SELECT symbol, name
+            From stock JOIN stock_strategy ON stock_strategy.stock_id = stock.id
+            WHERE strategy_id = ?
+        """, (strategy_id,))
+        return(self.cursor.fetchall())
+
     def getStrategies(self):
         self.cursor.execute("""
             SELECT * FROM strategy;
         """)
         return(self.cursor.fetchall())
 
+    def getStrategybyID(self, strategy_id:int):
+        self.cursor.execute("""
+            SELECT id, name FROM strategy
+            WHERE id = ?
+        """, (strategy_id,))
+        return(self.cursor.fetchone())
+
     def getStockbySymbol(self, symbol:str):
         self.cursor.execute("""
         SELECT * FROM stock WHERE symbol = ?;
         """,(symbol,))
         return(self.cursor.fetchone())
+
+    def insertStockStrategy(self, stock_id:int, strategy_id:int):
+        self.cursor.execute("""
+            INSERT INTO stock_strategy (stock_id, strategy_id)
+            VALUES (?, ?)
+        """, (stock_id, strategy_id))
 
     def commit(self):
         self.connection.commit()
